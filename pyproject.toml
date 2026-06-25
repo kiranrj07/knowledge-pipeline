@@ -1,0 +1,35 @@
+[project]
+name = "knowledge-pipeline"
+version = "0.1.0"
+description = "Research + knowledge pipeline for the youtube-automation internals channel."
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31",
+    "qdrant-client>=1.18.0",
+    "python-dotenv>=1.0",
+    "ollama>=0.4",
+]
+
+[project.optional-dependencies]
+parallel = ["parallel-web>=1.0.1"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["knowledge_pipeline*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]

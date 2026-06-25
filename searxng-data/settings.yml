@@ -1,0 +1,28 @@
+# Minimal SearXNG settings: enable JSON output for our discovery client.
+# Mounted into the container at /etc/searxng/settings.yml.
+use_default_settings: true
+
+server:
+  bind_address: "0.0.0.0:8888"
+  secret_key: "kp-dev-secret-not-for-production"
+
+search:
+  formats:
+    - html
+    - json
+  default_lang: "en"
+  safe_search: 0
+  autocomplete: ""
+  favicon_resolver: ""
+
+engines:
+  - name: duckduckgo
+    disabled: false
+  - name: bing
+    disabled: false
+  - name: google
+    disabled: true   # google often blocks headless requests; leave off
+  - name: brave
+    disabled: false
+  - name: startpage
+    disabled: false
