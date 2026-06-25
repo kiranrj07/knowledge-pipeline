@@ -89,6 +89,9 @@ The result is a single `.md` brief that cites RFCs, kernel source files, and You
 ├── .env / .env.example                  # Environment config
 ├── searxng-data/settings.yml             # SearXNG config (JSON enabled)
 │
+├── scripts/
+│   └── run_e2e.py                        # cross-pipeline orchestrator (knowledge → whisper)
+│
 ├── knowledge_pipeline/
 │   ├── __init__.py
 │   ├── config.py                         # PipelineConfig dataclass + load_config()
@@ -389,7 +392,48 @@ runs/tcp-syn-backlog/
 
 ---
 
-## 12. Known limitations
+## 12. End-to-end orchestration (research → video)
+
+The `scripts/run_e2e.py` script bridges knowledge-pipeline (this project) with the sibling video-production project at `/home/janak/ai/whisper/`. One command runs the full pipeline.
+
+### What it does
+
+1. Runs knowledge-pipeline CLI to produce `research_brief.md` + `manifest.json` (~3 min)
+2. Copies the brief into the whisper output directory as input context
+3. Runs whisper's `run_pipeline.py` to produce `final_video.mp4` via Graphviz + Piper + Whisper + FFmpeg (~5–15 min)
+
+### Usage
+
+```bash
+cd /home/janak/ai/knowledge-pipeline
+.venv/bin/python scripts/run_e2e.py --topic "AWS VPC"
+```
+
+### Options
+
+```bash
+# Override output directory
+.venv/bin/python scripts/run_e2e.py --topic "BGP route reflectors" --output-dir runs/bgp-rr
+
+# Enable Moondream diagram review loop in whisper
+.venv/bin/python scripts/run_e2e.py --topic "eBPF XDP" --review-loops 2
+
+# Skip knowledge-pipeline (use existing brief in output-dir)
+.venv/bin/python scripts/run_e2e.py --topic "..." --skip-knowledge
+
+# Override venv or repo paths (e.g., if whisper is installed elsewhere)
+.venv/bin/python scripts/run_e2e.py --topic "..." \
+    --kp-root /path/to/knowledge-pipeline \
+    --wp-root /path/to/whisper
+```
+
+### Future integration (not yet wired)
+
+whisper's `run_pipeline.py` does its own internal research synthesis. The ideal future state is whisper accepting `--input research_brief.md` and skipping its internal research when present. Today the orchestrator just copies the brief into whisper's output dir as context.
+
+---
+
+## 13. Known limitations
 
 | Area | Status | Workaround |
 |---|---|---|
